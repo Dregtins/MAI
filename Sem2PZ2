@@ -174,14 +174,21 @@ public:
 			delete[] mas;
 			mas = newMas;
 			size = size + 1;
- 
-	//=======================================================================================================
 	//=======================================================================================================
 	};
+	friend int distance(const Arr<T> &a, const Arr<T> &b){
+            int dist = 0;
+            const type_info& ti1 = typeid(dist);
+	        const type_info& ti2 = typeid(T);
+	        if (ti2 != ti1){
+		        throw bad_typeid();
+	        }
+            for (int i = 0; i < a.size; i++){
+               dist = dist + ((a.mas[i] - b.mas[i])*(a.mas[i] - b.mas[i]));
+            }
+	        return dist;
+    };
 };
- 
-
-    
     
 int main()
 {
@@ -208,9 +215,10 @@ int main()
     	
     	Arr<int> f(0);
     	f = a;
-    	f.printArr();
-    	
     	cout << f;
+    	
+    	b.SetArr(0, 1);
+    	cout << distance(a,b);
 	}
 	catch(const char* msg){
 	    cout << msg << "\n";
