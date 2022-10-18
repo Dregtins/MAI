@@ -20,7 +20,7 @@ int main()
             buf.clear();
         };
     };
-    for(auto x:mp){
+    for(auto x = mySecondMap.begin(); x != mySecondMap.end(); ++x){
         cout<<x.first<<" -> "<<x.second<<endl;
     }
     return 0;
