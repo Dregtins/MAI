@@ -1,0 +1,32 @@
+#include <iostream>
+#include <vector>
+#include <cstdlib>
+
+using namespace std;
+
+
+int main()
+{
+    vector <int> v1,v2;
+    int a, b;
+    cout << "Введите количество значений для вектора 1 и 2 (в формате v1 v2): ";
+    cin >> a >> b;
+    v1.reserve(a);
+    v2.reserve(b);
+    srand(time(NULL));
+    int i;
+    for (int j = 0; j < a; ++j) {
+        v1.insert(v1.end(), rand()%100 -100);
+    };
+    for (int j = 0; j < b; ++j) {
+        v2.insert(v2.end(), rand()%200 -100);
+    };
+    for (int i = 0; i < a; i++) {
+    cout << v1[i] << " ";
+    };
+    for (int i = 0; i < b; i++) {
+    cout << v2[i] << " ";
+    };
+    
+    return 0;
+}
