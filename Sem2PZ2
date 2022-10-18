@@ -16,12 +16,8 @@ public:
 	//=======================================================================================================
 	Arr(int i) {
 		this -> size = i;
-		try{
-		    this -> mas = new T[size];
-	    }
-		catch(bad_alloc xa){
-		    cout << "Память не выделена";
-		};
+		this -> mas = new T[size];
+	    
 	};
 	//=======================================================================================================
 	~Arr() {
@@ -30,12 +26,9 @@ public:
 	//=======================================================================================================
 	Arr(const Arr& other) {
 		this -> size = other.size;
-		try{
-		    this -> mas = new T[other.size];
-		}
-		catch(bad_alloc xa){
-		    cout << "Память не выделена";
-		};
+		
+		this -> mas = new T[other.size];
+		
 		for (int i = 0; i < other.size; i++) {
 			this->mas[i] = other.mas[i];
 		};
@@ -50,30 +43,30 @@ public:
 			temp.SetNewSize(this->size);
 			for (int i = 0; i < other.size; i++) {
 				temp.mas[i] = this->mas[i] - other.mas[i];
-			};
+			}
 			while (b != a) {
 				temp.mas[b] = this->mas[b];
 				b++;
-			};
+			}
 		}
 		else if (this->size < other.size) {
 			temp.SetNewSize(other.size);
 			for (int i = 0; i < this->size; i++) {
 				temp.mas[i] = this->mas[i] - other.mas[i];
-			};
+			}
 			while (a != b) {
 				temp.mas[a] = 0 - other.mas[a];
 				a++;
-			};
+			}
 		}
 		else {
 			temp.SetNewSize(this->size);
 			for (int i = 0; i < size; i++) {
 				temp.mas[i] = this->mas[i] - other.mas[i];
-			};
-		};
+			}
+		}
 		return temp;
-	};
+	}
 	//=======================================================================================================
 	Arr<T> operator +(const Arr& other) {
 		int a, b;
@@ -105,14 +98,14 @@ public:
 		this -> size = other.size;
 		for (int i = 0; i < other.size; i++){
 		    this -> mas[i] = other.mas[i];
-		};
+		}
 		return *this;
 	};
 	//=======================================================================================================
 	friend ostream& operator<<(ostream &os, const Arr<T> &a) {
 	    for (int i = 0; i < a.size; i++){
 	        os << a.mas[i] << " ";
-	    };
+	    }
 	    return os << endl;
     };
 	//=======================================================================================================
@@ -127,10 +120,7 @@ public:
 		if ((i < 0) or (i > size - 1)) {
 			throw out_of_range("Выход за границы массива");
 		}
-		int a;
-		const type_info& ti1 = typeid(a);
-		const type_info& ti2 = typeid(T);
-		if (ti1 == ti2){
+		if (typeid(int) == typeid(T)){
 		    if ((value < -100) or (value > 100)) {
 		      throw invalid_argument("Число должно принадлежать промежутку [-100;100]");
 	    	}
@@ -141,20 +131,18 @@ public:
 	//=======================================================================================================
 	int GetArr(const int i) {
 		if ((i < 0) or (i > size - 1)) {
-			cout << "Ошибка. Выход за границы массива\n";
-			return 0;
+			throw out_of_range("Выход за границы массива");
 		}
- 
 		cout << i << " элемент массива = " << mas[i] << "\n";
- 
-	};
+		return mas[i];
+	}
 	//=======================================================================================================
 	void printArr() {
 		for (int i = 0; i != size; i++) {
 			cout << mas[i] << " ";
-		};
+		}
 		cout << "\n";
-	};
+	}
 	//=======================================================================================================
 	void Push_Back(T value) {
 		int a;
