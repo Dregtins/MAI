@@ -1,0 +1,66 @@
+#include <iostream>
+#include <stack>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int vertex;
+vector <string> vec;
+
+void filling(bool **mas) {
+	string str;
+	for (int i = 0; i < vertex; i++) {
+		for (int j = 0; j < vertex; j++) {
+			mas[i][j] = 0;
+		}
+	}
+	while ((getline(cin, str)) && (vec.size() < vertex)) {
+		vec.push_back(str);
+	}
+	vec.push_back(str);
+	for (int i = 1; i <= vertex; i++) {
+		string buf = vec[i];
+		string intbuf;
+		for (int j = 0; j <= buf.size(); j++){
+			if ((buf[j] == ' ') or (j == buf.size())) {
+				mas[i - 1][stoi(intbuf) - 1] = 1;
+				intbuf.clear();
+				continue;
+			}
+			else {
+				intbuf = intbuf + buf[j];
+				//cout << intbuf << ' ';
+			}
+		}
+	}
+};
+
+void print(bool **mas) {
+	for (int i = 0; i < vertex; i++) {
+		for (int j = 0; j < vertex; j++) {
+			cout << mas[i][j] << ' ';
+		}
+		cout << '\n';
+	}
+}
+
+
+int main()
+{
+	cin >> vertex;
+	bool** mas = new bool* [vertex];
+	for (int i = 0; i < vertex; i++) {
+		mas[i] = new bool[vertex];
+	}
+
+	filling(mas);
+	print(mas);
+
+
+
+	for (int i = 0; i < vertex; i++) {
+		delete[] mas[i];
+	}
+	delete[] mas;
+}
