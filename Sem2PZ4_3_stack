@@ -50,14 +50,23 @@ void print(bool **mas) {
 stack <int> st_nvisited;
 vector <int> vec_visited;
 //===============================================================================
+bool flag = 0;
+
 void dfs(bool **mas, bool **mas_dost, int point){
-    mas_dost[point][st_nvisited.top()] = 1;
     vec_visited.push_back(st_nvisited.top());
     st_nvisited.pop();
     for (int i = 0; i < vertex; i++){
-        if (mas[point][i] = 1){
+        if (mas[point][i] == 1){
             mas_dost[point][i] = 1;
-            st_nvisited.push(i);
+            for (int j  = 0; j < vec_visited.size(); j++){
+                if (vec_visited[j] == i){
+                    flag = 1;
+                }
+            }
+            if (flag == 0){
+                st_nvisited.push(i);
+            }
+            flag = 0;
         }
     }
     if (!st_nvisited.empty()){
@@ -65,7 +74,7 @@ void dfs(bool **mas, bool **mas_dost, int point){
     }
     else {
         while (!vec_visited.empty()){
-            mas_dost[vec_visited[0]][vec_visited[vec_visited.size()]] = 1;
+            mas_dost[vec_visited[0]][vec_visited[vec_visited.size() - 1]] = 1;
             vec_visited.pop_back();
         }
     }
