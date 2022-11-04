@@ -12,10 +12,10 @@ struct Column{
     string price;
 };
 
-int main()
-{
+vector<Column> vec;
+
+void Reader(vector<Column> vec){
     string line;
-    vector<Column> vec;
     ifstream in("text.txt");
     if (in.is_open())
     {
@@ -57,5 +57,11 @@ int main()
         }
     }
     in.close();
+} 
+
+
+int main()
+{
+    Reader(vec);
     return 0;
 }
