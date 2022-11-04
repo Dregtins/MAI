@@ -10,39 +10,45 @@ struct Column{
     string brand;
     string car_model;
     string price;
-}
-
-void 
+};
 
 int main()
 {
     string line;
     vector<Column> vec;
-    ifstream in("text.txt"); // окрываем файл для чтения
+    ifstream in("text.txt");
     if (in.is_open())
     {
         int line_counter = 0;
         while (getline(in, line))
-        {   
+        {
             Column struct_buf;
             string string_buf;
             int buf_counter = 0;
             for (int i = 0; i < line.size(); i++){
                 if (line[i] == ' '){
                     buf_counter++;
+                    switch(buf_counter){
+                        case 1:
+                            struct_buf.id_zap = string_buf;
+                            string_buf.clear();
+                            break;
+                        case 2:
+                            struct_buf.brand = string_buf;
+                            string_buf.clear();
+                            break;
+                        case 3:
+                            struct_buf.car_model = string_buf;
+                            string_buf.clear();
+                            break;
+                        case 4:
+                            struct_buf.price = string_buf;
+                            string_buf.clear();
+                            break;
+                    }
                 }
                 else {
                     string_buf.push_back(line[i]);
-                }
-                switch(buf_counter){
-                    case 1:
-                        struct_buf.id_zap = string_buf;
-                    case 2:
-                        struct_buf.brand = string_buf;
-                    case 3:
-                        struct_buf.car_model = string_buf;
-                    case 4:
-                        struct_buf.price = string_buf;
                 }
             }
             vec[line_counter] = struct_buf;
@@ -51,7 +57,5 @@ int main()
         }
     }
     in.close();
-    
-    
     return 0;
 }
