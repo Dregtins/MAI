@@ -26,7 +26,7 @@ int main()
             string string_buf;
             int buf_counter = 0;
             for (int i = 0; i < line.size(); i++){
-                if (line[i] == ' '){
+                if ((line[i] == ' ') or (line[i] == '\r')){
                     buf_counter++;
                     switch(buf_counter){
                         case 1:
@@ -51,7 +51,7 @@ int main()
                     string_buf.push_back(line[i]);
                 }
             }
-            vec[line_counter] = struct_buf;
+            vec.push_back(struct_buf);
             line_counter++;
             cout << line << std::endl;
         }
