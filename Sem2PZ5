@@ -54,7 +54,6 @@ void Reader(vector<Column>& vec){
             }
             vec.push_back(struct_buf);
             line_counter++;
-            cout << line << std::endl;
         }
     }
     in.close();
