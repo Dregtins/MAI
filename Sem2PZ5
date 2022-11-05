@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <iomanip>
 
 using namespace std;
 
@@ -14,7 +15,7 @@ struct Column{
 
 vector<Column> vec;
 
-void Reader(vector<Column> vec){
+void Reader(vector<Column>& vec){
     string line;
     ifstream in("text.txt");
     if (in.is_open())
@@ -25,7 +26,7 @@ void Reader(vector<Column> vec){
             Column struct_buf;
             string string_buf;
             int buf_counter = 0;
-            for (int i = 0; i < line.size(); i++){
+            for (int i = 0; i <= line.size(); i++){
                 if ((line[i] == ' ') or (line[i] == '\r')){
                     buf_counter++;
                     switch(buf_counter){
@@ -59,9 +60,26 @@ void Reader(vector<Column> vec){
     in.close();
 } 
 
+void Print(vector<Column>& vec){
+    cout << '|' << ' ' << setw(4) << "ID" << ' ' << '|' << ' ';
+    cout << setw(10) << "Brand" << ' '<< '|' << ' '; 
+    cout << setw(14) << "Car Model" << ' '<< '|' << ' '; 
+    cout << setw(6) << "Price" << ' '<< '|' << '\n';
+    cout.width(48);
+    cout.fill('-');
+    cout << '\n';
+    cout.fill(' ');
+    for (int i = 0; i < vec.size(); i++){
+        cout << '|' << ' ' << setw(4) << vec[i].id_zap << ' '<< '|' << ' ';
+        cout << setw(10) <<vec[i].brand << ' '<< '|' << ' ';
+        cout << setw(14) << vec[i].car_model << ' '<< '|' << ' ';
+        cout << setw(6) << vec[i].price << ' '<< '|' << '\n';
+    }
+}
 
 int main()
 {
     Reader(vec);
+    Print(vec);
     return 0;
 }
