@@ -3,7 +3,6 @@
 #include <string>
 #include <fstream>
 #include <iomanip>
-#include <conio.h>
 
 using namespace std;
 
@@ -82,16 +81,18 @@ void PrintMainMenu(){
     cout << "1. Вывести исходные данные.\n";
     cout << "2. Перейти к выбору критерия для поиска.\n";
     cout << "3. Закончить работу.\n";
-    cout << "Выберите желаемый пункт.\n";
+    cout << "Введите номер желаемого пункта:\n";
 }
 
 void PrintFinderMenu(){
-    cout << "1. Поиск по ID запчасти.\n";
-    cout << "2. Поиск по производителю запчасти.\n";
-    cout << "3. Поиск по модели автомобиля.\n";
-    cout << "4. Поиск по цене.\n";
-    cout << "5. Закончить поиск\n";
-    cout << "Выберите желаемый пункт\n";
+    cout << "1. Вывести текущий список\n";
+    cout << "2. Поиск по ID запчасти.\n";
+    cout << "3. Поиск по производителю запчасти.\n";
+    cout << "4. Поиск по модели автомобиля.\n";
+    cout << "5. Поиск по цене.\n";
+    cout << "6. Очистить критерии поиска.\n";
+    cout << "7. Закончить поиск.\n";
+    cout << "Введите номер желаемого пункта:\n";
 }
 
 void SortByID(int k){
@@ -103,56 +104,125 @@ void SortByID(int k){
         }
     }
     else {
-        
+        for (int i = 0; i <= vec_buf.size(); i++){
+            if (vec_buf[i].id_zap != k){
+                vec_buf.erase(vec_buf.begin() + i);
+            }
+        }
     }
 }
 
-void SortByBrand(){
-    
+void SortByBrand(string k){
+    if (vec_buf.empty()){
+        for (int i = 0; i < vec.size(); i++){
+        if (vec[i].brand == k){
+            vec_buf.push_back(vec[i]);
+            }
+        }
+    }
+    else {
+        for (int i = 0; i <= vec_buf.size(); i++){
+            if (vec_buf[i].brand != k){
+                vec_buf.erase(vec_buf.begin() + i);
+            }
+        }
+    }
 }
 
-void SortByModel(){
-    
+void SortByModel(string k){
+    if (vec_buf.empty()){
+        for (int i = 0; i < vec.size(); i++){
+        if (vec[i].car_model == k){
+            vec_buf.push_back(vec[i]);
+            }
+        }
+    }
+    else {
+        for (int i = 0; i <= vec_buf.size(); i++){
+            if (vec_buf[i].car_model != k){
+                vec_buf.erase(vec_buf.begin() + i);
+            }
+        }
+    }
 }
 
-void SortByPrice(){
-    
+void SortByPrice(int k){
+    if (vec_buf.empty()){
+        for (int i = 0; i < vec.size(); i++){
+            if (vec[i].price <= k){
+                vec_buf.push_back(vec[i]);
+            }
+        }
+    }
+    else {
+        for (int i = 0; i <= vec_buf.size(); i++){
+            if (vec_buf[i].price > k){
+                vec_buf.erase(vec_buf.begin() + i);
+            }
+        }
+    }
 }
 
 int main()
 {
     Reader(vec);
-    PrintMainMenu();
     int i = 0;
-    while (i != 3){
+    do{
         PrintMainMenu();
-        i = getch();
+        cin >> i;
         switch(i){
             case 1: 
                 Print(vec);
+                break;
             case 2:
-                int j = getch();
-                while (j != 5){
+                int j;
+                do{
+                    PrintFinderMenu();
+                    cin >> j;
                     int i_criterion;
                     string s_criterion;
                     switch(j){
                         case 1:
-                            cout << "Введите ID запчасти:";
+                            if (vec_buf.empty()){
+                                Print(vec);
+                            }
+                            else {
+                                Print(vec_buf);
+                            }
+                            break;
+                        case 2:
+                            cout << "Введите ID запчасти:\n";
                             cin >> i_criterion;
                             SortByID(i_criterion);
                             Print(vec_buf);
-                        case 2:
-                            SortByBrand();
-                            Print(vec_buf);
+                            break;
                         case 3:
-                            SortByModel();
+                            cout << "Введите производителя:\n";
+                            cin >> s_criterion;
+                            SortByBrand(s_criterion);
                             Print(vec_buf);
+                            break;
                         case 4:
-                            SortByPrice();
+                            cout << "Введите модель автомобиля:\n";
+                            cin >> s_criterion;
+                            SortByModel(s_criterion);
                             Print(vec_buf);
+                            break;
+                        case 5:
+                            cout << "Введите максимальную цену:\n";
+                            cin >> i_criterion;
+                            SortByPrice(i_criterion);
+                            Print(vec_buf);
+                            break;
+                        case 6:
+                            cout << "Критерии были успешно очищены!\n";
+                            vec_buf.clear();
+                            break;
                     }
-                }
+                } while (j != 7);
+                vec_buf.clear();
+                break;
         }
-    }
+    } while (i != 3);
     return 0;
 }
