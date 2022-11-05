@@ -1,0 +1,37 @@
+#include <iostream>
+
+using namespace std;
+
+template<typename T>
+class list{
+    private:
+        int id;
+        T data;
+        int accessCount;
+        list *next;
+        list *prev;
+    public:
+        list(){
+            id = 0;
+            data = NULL;
+            accessCount = 0;
+            next = NULL;
+            prev = NULL;
+        }
+        void AddElemToList(list **head, list *prev){
+            *head = new list();
+            cout << "Введите данные:\n";
+            cin >> (*head) -> data; 
+            (*head) -> prev = prev;
+            (*head) -> next = NULL;
+        }
+}
+
+list *head;
+list *current;
+
+int main()
+{
+    AddElemToList();
+    return 0;
+}
