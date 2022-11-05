@@ -158,7 +158,7 @@ void SortByModel(string k){
     }
 }
 
-void SortByPrice(int k){
+void SortByPriceMax(int k){
     if (vec_buf.empty()){
         for (int i = 0; i < vec.size(); i++){
             if (vec[i].price <= k){
@@ -170,6 +170,27 @@ void SortByPrice(int k){
         vector<int> trashNumb; 
         for (int i = 0; i <= vec_buf.size(); i++){
             if (vec_buf[i].id_zap > k){
+                trashNumb.push_back(i);
+            }
+        }
+        for (int i = trashNumb.size() -  1; i > -1; i--){
+            vec_buf.erase(vec_buf.begin() + (trashNumb[i]));
+        }
+    }
+}
+
+void SortByPriceMin(int k){
+    if (vec_buf.empty()){
+        for (int i = 0; i < vec.size(); i++){
+            if (vec[i].price > k){
+                vec_buf.push_back(vec[i]);
+            }
+        }
+    }
+    else {
+        vector<int> trashNumb; 
+        for (int i = 0; i >= vec_buf.size(); i++){
+            if (vec_buf[i].id_zap < k){
                 trashNumb.push_back(i);
             }
         }
@@ -225,9 +246,12 @@ int main()
                             Print(vec_buf);
                             break;
                         case 5:
+                            cout << "Введите минимальную цену:\n";
+                            cin >> i_criterion;
+                            SortByPriceMin(i_criterion);
                             cout << "Введите максимальную цену:\n";
                             cin >> i_criterion;
-                            SortByPrice(i_criterion);
+                            SortByPriceMax(i_criterion);
                             Print(vec_buf);
                             break;
                         case 6:
