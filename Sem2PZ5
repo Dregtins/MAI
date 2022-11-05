@@ -27,7 +27,7 @@ void Reader(vector<Column>& vec){
             string string_buf;
             int buf_counter = 0;
             for (int i = 0; i <= line.size(); i++){
-                if ((line[i] == ' ') or (line[i] == '\r')){
+                if ((line[i] == ' ') or (line[i] == '\r') or (i == line.size())){
                     buf_counter++;
                     switch(buf_counter){
                         case 1:
