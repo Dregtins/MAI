@@ -3,17 +3,20 @@
 #include <string>
 #include <fstream>
 #include <iomanip>
+#include <conio.h>
 
+setlocale(LC_ALL, "Russian")
 using namespace std;
 
 struct Column{
-    string id_zap;
+    int id_zap;
     string brand;
     string car_model;
-    string price;
+    int price;
 };
 
 vector<Column> vec;
+vector<Column> vec_buf;
 
 void Reader(vector<Column>& vec){
     string line;
@@ -31,7 +34,7 @@ void Reader(vector<Column>& vec){
                     buf_counter++;
                     switch(buf_counter){
                         case 1:
-                            struct_buf.id_zap = string_buf;
+                            struct_buf.id_zap = stoi(string_buf);
                             string_buf.clear();
                             break;
                         case 2:
@@ -43,7 +46,7 @@ void Reader(vector<Column>& vec){
                             string_buf.clear();
                             break;
                         case 4:
-                            struct_buf.price = string_buf;
+                            struct_buf.price = stoi(string_buf);
                             string_buf.clear();
                             break;
                     }
@@ -76,9 +79,80 @@ void Print(vector<Column>& vec){
     }
 }
 
+void PrintMainMenu(){
+    cout << "1. Вывести исходные данные.";
+    cout << "2. Перейти к выбору критерия для поиска.";
+    cout << "3. Закончить работу.";
+    cout << "Выберите желаемый пункт.";
+}
+
+void PrintFinderMenu(){
+    cout << "1. Поиск по ID запчасти.";
+    cout << "2. Поиск по производителю запчасти.";
+    cout << "3. Поиск по модели автомобиля.";
+    cout << "4. Поиск по цене.";
+    cout << "5. Закончить поиск";
+    cout << "Выберите желаемый пункт";
+}
+
+void SortByID(int k){
+    if (vec_buf.empty()){
+        for (int i = 0; i < vec.size(); i++){
+        if (vec[i].id_zap == k){
+            vec_buf.push_back(vec[i]);
+            }
+        }
+    }
+    else {
+        
+    }
+}
+
+void SortByBrand(){
+    
+}
+
+void SortByModel(){
+    
+}
+
+void SortByPrice(){
+    
+}
+
 int main()
 {
     Reader(vec);
-    Print(vec);
+    int i;
+    while (i != 3){
+        PrintMainMenu();
+        i = getch();
+        switch(i){
+            case 1: 
+                Print(vec);
+            case 2:
+                int j = getch();
+                while (j != 5){
+                    int i_criterion;
+                    string s_criterion;
+                    switch(j){
+                        case 1:
+                            cout << "Введите ID запчасти:";
+                            cin >> i_criterion;
+                            SortByID(i_criterion);
+                            Print(vec_buf);
+                        case 2:
+                            SortByBrand();
+                            Print(vec_buf);
+                        case 3:
+                            SortByModel();
+                            Print(vec_buf);
+                        case 4:
+                            SortByPrice();
+                            Print(vec_buf);
+                    }
+                }
+        }
+    }
     return 0;
 }
