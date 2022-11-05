@@ -105,12 +105,12 @@ void SortByID(int k){
     }
     else {
         vector<int> trashNumb; 
-        for (int i = 0; i <= vec_buf.size(); i++){
+        for (int i = 0; i < vec_buf.size(); i++){
             if (vec_buf[i].id_zap != k){
                 trashNumb.push_back(i);
             }
         }
-        for (int i = trashNumb.size() -  1; i > 0; i--){
+        for (int i = trashNumb.size() -  1; i > -1; i--){
             vec_buf.erase(vec_buf.begin() + (trashNumb[i]));
         }
     }
@@ -126,12 +126,12 @@ void SortByBrand(string k){
     }
     else {
         vector<int> trashNumb; 
-        for (int i = 0; i <= vec_buf.size(); i++){
+        for (int i = 0; i < vec_buf.size(); i++){
             if (vec_buf[i].brand != k){
                 trashNumb.push_back(i);
             }
         }
-        for (int i = trashNumb.size() -  1; i > 0; i--){
+        for (int i = trashNumb.size() -  1; i > -1; i--){
             vec_buf.erase(vec_buf.begin() + (trashNumb[i]));
         }
     }
@@ -147,12 +147,12 @@ void SortByModel(string k){
     }
     else {
         vector<int> trashNumb; 
-        for (int i = 0; i <= vec_buf.size(); i++){
+        for (int i = 0; i < vec_buf.size(); i++){
             if (vec_buf[i].car_model != k){
                 trashNumb.push_back(i);
             }
         }
-        for (int i = trashNumb.size() -  1; i > 0; i--){
+        for (int i = trashNumb.size() -  1; i > -1; i--){
             vec_buf.erase(vec_buf.begin() + (trashNumb[i]));
         }
     }
@@ -173,7 +173,7 @@ void SortByPrice(int k){
                 trashNumb.push_back(i);
             }
         }
-        for (int i = trashNumb.size() -  1; i > 0; i--){
+        for (int i = trashNumb.size() -  1; i > -1; i--){
             vec_buf.erase(vec_buf.begin() + (trashNumb[i]));
         }
     }
