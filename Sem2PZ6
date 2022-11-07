@@ -2,36 +2,126 @@
 
 using namespace std;
 
-template<typename T>
-class list{
-    private:
-        int id;
-        T data;
-        int accessCount;
-        list *next;
-        list *prev;
-    public:
-        list(){
-            id = 0;
-            data = NULL;
-            accessCount = 0;
-            next = NULL;
-            prev = NULL;
-        }
-        void AddElemToList(list **head, list *prev){
-            *head = new list();
-            cout << "Введите данные:\n";
-            cin >> (*head) -> data; 
-            (*head) -> prev = prev;
-            (*head) -> next = NULL;
-        }
-}
+template<class T>
+struct Node {
+    int id;
+    int accessCount;
+    T data;
+    Node* next, * prev;
+};
 
-list *head;
-list *current;
+
+template<class T>
+class List {
+private:
+    Node<T> *head;
+    Node<T> *tail;
+    int count;
+    int id_counter;
+public:
+    List() {
+        head = tail = NULL;
+        count = 0;
+        id_counter = 0;
+    }
+//===============================================================================================
+    List(List& L) {
+        head = tail = NULL;
+        count = 0;
+        id_counter = 0;
+
+        Node* temp = L.head;
+        while (temp != 0)
+        {
+            AddTail(temp->data);
+            temp = temp->next;
+        }
+    }
+//===============================================================================================
+    ~List() {
+        Node<T>* temp = head;
+        Node<T>* current = head;
+        while (count != 0) {
+            current = temp;
+            temp = temp->next;
+            delete current;
+        }
+    }
+//===============================================================================================
+    void push_back(T _data) {
+        Node<T>* temp = new Node<T>;
+
+        temp->next = nullptr;
+        temp->prev = nullptr;
+        temp->data = _data;
+        temp->id = id_counter;
+        temp->accessCount = 0;
+
+        if (tail != 0) {
+            tail->next = temp;
+        }
+
+        if (count = 0) {
+            head = temp;
+            tail = temp;
+        }
+        else {
+            tail = temp;
+        }
+
+        count++;
+        id_counter++;
+    }
+//===============================================================================================
+    void PrintByID(int _id) {
+        Node<T>* temp = head;
+        while (temp->id != _id) {
+            temp = temp->next;
+        }
+
+        temp->accessCount++;
+        cout << temp->id << ' ' << temp->accessCount << ' ' << temp->data;
+        Sort();
+    }
+//===============================================================================================
+    void Print() {
+        Node<T>* temp = head;
+        while (temp->next != nullptr) {
+            cout << temp->id << ' ' << temp->accessCount << ' ' << temp->data;
+        }
+    }
+//===============================================================================================
+    void Sort() {
+        Node<T>* temp;
+        for (Node* i = head; i; i = i->next) {
+            for (Node* j = head; j; j = j->next) {
+                if (i->accessCount > j->accessCount) {
+                    temp->id = i->id;
+                    temp->accessCount = i->accessCount;
+                    temp->data = i->data;
+
+                    i->id = j->id;
+                    i->accessCount = j->accessCount;
+                    i->data = j->data;
+
+                    j->id = temp->id;
+                    j->accessCount = temp->accessCount;
+                    j->data = temp->data;
+                }
+            }
+        }
+    }
+//===============================================================================================
+};
+
 
 int main()
 {
-    AddElemToList();
+    List<int> a;
+    a.push_back(5);
+    a.push_back(2);
+    a.push_back(1);
+    a.push_back(3);
+    a.Print();
     return 0;
 }
