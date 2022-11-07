@@ -1,127 +1,215 @@
 #include <iostream>
-
+#include <locale>
+#include <stdexcept>
+#include <new>
+ 
 using namespace std;
 
-template<class T>
-struct Node {
-    int id;
-    int accessCount;
-    T data;
-    Node* next, * prev;
-};
+template <typename T>
 
-
-template<class T>
-class List {
+class Arr {
 private:
-    Node<T> *head;
-    Node<T> *tail;
-    int count;
-    int id_counter;
+	int size;
+	T *mas;
+ 
 public:
-    List() {
-        head = tail = NULL;
-        count = 0;
-        id_counter = 0;
-    }
-//===============================================================================================
-    List(List& L) {
-        head = tail = NULL;
-        count = 0;
-        id_counter = 0;
-
-        Node* temp = L.head;
-        while (temp != 0)
-        {
-            AddTail(temp->data);
-            temp = temp->next;
-        }
-    }
-//===============================================================================================
-    ~List() {
-        Node<T>* temp = head;
-        Node<T>* current = head;
-        while (count != 0) {
-            current = temp;
-            temp = temp->next;
-            delete current;
-        }
-    }
-//===============================================================================================
-    void push_back(T _data) {
-        Node<T>* temp = new Node<T>;
-
-        temp->next = nullptr;
-        temp->prev = nullptr;
-        temp->data = _data;
-        temp->id = id_counter;
-        temp->accessCount = 0;
-
-        if (tail != 0) {
-            tail->next = temp;
-        }
-
-        if (count = 0) {
-            head = temp;
-            tail = temp;
-        }
-        else {
-            tail = temp;
-        }
-
-        count++;
-        id_counter++;
-    }
-//===============================================================================================
-    void PrintByID(int _id) {
-        Node<T>* temp = head;
-        while (temp->id != _id) {
-            temp = temp->next;
-        }
-
-        temp->accessCount++;
-        cout << temp->id << ' ' << temp->accessCount << ' ' << temp->data;
-        Sort();
-    }
-//===============================================================================================
-    void Print() {
-        Node<T>* temp = head;
-        while (temp->next != nullptr) {
-            cout << temp->id << ' ' << temp->accessCount << ' ' << temp->data;
-        }
-    }
-//===============================================================================================
-    void Sort() {
-        Node<T>* temp;
-        for (Node* i = head; i; i = i->next) {
-            for (Node* j = head; j; j = j->next) {
-                if (i->accessCount > j->accessCount) {
-                    temp->id = i->id;
-                    temp->accessCount = i->accessCount;
-                    temp->data = i->data;
-
-                    i->id = j->id;
-                    i->accessCount = j->accessCount;
-                    i->data = j->data;
-
-                    j->id = temp->id;
-                    j->accessCount = temp->accessCount;
-                    j->data = temp->data;
-                }
+	//=======================================================================================================
+	Arr(int i) {
+		this -> size = i;
+		this -> mas = new T[size];
+	    
+	};
+	//=======================================================================================================
+	~Arr() {
+		delete [] mas; 
+	};
+	//=======================================================================================================
+	Arr(const Arr& other) {
+		this -> size = other.size;
+		
+		this -> mas = new T[other.size];
+		
+		for (int i = 0; i < other.size; i++) {
+			this->mas[i] = other.mas[i];
+		};
+	};
+	//=======================================================================================================
+	Arr<T> operator -(const Arr & other) {
+		int a, b;
+		a = this->size;
+		b = other.size;
+		Arr temp(a>b?a:b);
+		if (this->size > other.size) {
+			temp.SetNewSize(this->size);
+			for (int i = 0; i < other.size; i++) {
+				temp.mas[i] = this->mas[i] - other.mas[i];
+			}
+			while (b != a) {
+				temp.mas[b] = this->mas[b];
+				b++;
+			}
+		}
+		else if (this->size < other.size) {
+			temp.SetNewSize(other.size);
+			for (int i = 0; i < this->size; i++) {
+				temp.mas[i] = this->mas[i] - other.mas[i];
+			}
+			while (a != b) {
+				temp.mas[a] = 0 - other.mas[a];
+				a++;
+			}
+		}
+		else {
+			temp.SetNewSize(this->size);
+			for (int i = 0; i < size; i++) {
+				temp.mas[i] = this->mas[i] - other.mas[i];
+			}
+		}
+		return temp;
+	}
+	//=======================================================================================================
+	Arr<T> operator +(const Arr& other) {
+		int a, b;
+		a = this->size;
+		b = other.size;
+		Arr temp(a>b?a:b);
+		if (this->size > other.size) {
+			for (int i = 0; i < other.size; i++) {
+				temp.mas[i] = this->mas[i] + other.mas[i];
+			};
+			while (b != a) {
+				temp.mas[b] = this->mas[b];
+				b++;
+			}
+		}
+		else {
+			for (int i = 0; i < this->size; i++) {
+				temp.mas[i] = this->mas[i] + other.mas[i];
+			}
+			while (a != b) {
+				temp.mas[a] = other.mas[a];
+				a++;
+			}
+		}
+		return temp;
+	};
+	//=======================================================================================================
+	Arr<T> operator =(const Arr& other) {
+		this -> size = other.size;
+		for (int i = 0; i < other.size; i++){
+		    this -> mas[i] = other.mas[i];
+		}
+		return *this;
+	};
+	//=======================================================================================================
+	friend ostream& operator<<(ostream &os, const Arr<T> &a) {
+	    for (int i = 0; i < a.size; i++){
+	        os << a.mas[i] << " ";
+	    }
+	    return os << endl;
+    };
+	//=======================================================================================================
+	void SetNewSize(const int i) {
+		T* newMas = new T[i];
+		delete mas;
+		mas = newMas;
+		size = i;
+	};
+	//=======================================================================================================
+	void SetArr(const int i, const T value) {
+		if ((i < 0) or (i > size - 1)) {
+			throw out_of_range("Выход за границы массива");
+		}
+		if (typeid(int) == typeid(T)){
+		    if ((value < -100) or (value > 100)) {
+		      throw invalid_argument("Число должно принадлежать промежутку [-100;100]");
+	    	}
+		}
+		mas[i] = value;
+ 
+	};
+	//=======================================================================================================
+	int GetArr(const int i) {
+		if ((i < 0) or (i > size - 1)) {
+			throw out_of_range("Выход за границы массива");
+		}
+		cout << i << " элемент массива = " << mas[i] << "\n";
+		return mas[i];
+	}
+	//=======================================================================================================
+	void printArr() {
+		for (int i = 0; i != size; i++) {
+			cout << mas[i] << " ";
+		}
+		cout << "\n";
+	}
+	//=======================================================================================================
+	void Push_Back(T value) {
+		int a;
+		const type_info& ti1 = typeid(a);
+		const type_info& ti2 = typeid(T);
+		if (ti1 == ti2){
+		    if ((value < -100) or (value > 100)) {
+		      throw invalid_argument("Число должно принадлежать промежутку [-100;100]");
+	    	}
+		}
+ 
+			T* newMas = new T[size + 1];
+			for (int i = 0; i < size; i++) {
+				newMas[i] = mas[i];//memcopy
+			};
+			newMas[size] = value;
+			delete[] mas;
+			mas = newMas;
+			size = size + 1;
+	//=======================================================================================================
+	};
+	friend int distance(const Arr<T> &a, const Arr<T> &b){
+            int dist = 0;
+            const type_info& ti1 = typeid(dist);
+	        const type_info& ti2 = typeid(T);
+	        if (ti2 != ti1){
+		        throw bad_typeid();
+	        }
+            for (int i = 0; i < a.size; i++){
+               dist = dist + ((a.mas[i] - b.mas[i])*(a.mas[i] - b.mas[i]));
             }
-        }
-    }
-//===============================================================================================
+	        return dist;
+    };
 };
-
-
+    
 int main()
 {
-    List<int> a;
-    a.push_back(5);
-    a.push_back(2);
-    a.push_back(1);
-    a.push_back(3);
-    a.Print();
-    return 0;
+	setlocale(LC_ALL, "Russian");
+ 
+	try{
+	    Arr<int> a(5);
+	    a.SetArr(0, 5);
+	    a.SetArr(1, 99);
+	    a.SetArr(2, 3);
+	    a.SetArr(3, 2);
+    	a.SetArr(4, 1);
+	    a.printArr();	
+ 
+	    Arr<int> b(a);
+	    b.Push_Back(5);
+	    b.printArr();
+ 
+    	Arr<int> c = a + b;
+    	c.printArr();
+ 
+    	Arr<int> d = a - b;
+    	d.printArr();
+    	
+    	Arr<int> f(0);
+    	f = a;
+    	cout << f;
+    	
+    	b.SetArr(0, 1);
+    	cout << distance(a,b);
+	}
+	catch(const char* msg){
+	    cout << msg << "\n";
+	};
+	return 0;
 }
