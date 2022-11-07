@@ -30,10 +30,10 @@ public:
         count = 0;
         id_counter = 0;
 
-        Node* temp = L.head;
+        Node<T>* temp = L.head;
         while (temp != 0)
         {
-            AddTail(temp->data);
+            push_back(temp->data);
             temp = temp->next;
         }
     }
@@ -62,10 +62,10 @@ public:
         }
 
         if (count = 0) {
-            head = temp;
-            tail = temp;
+            head = tail = temp;
         }
         else {
+            temp->prev = tail;
             tail = temp;
         }
 
@@ -93,8 +93,8 @@ public:
 //===============================================================================================
     void Sort() {
         Node<T>* temp;
-        for (Node* i = head; i; i = i->next) {
-            for (Node* j = head; j; j = j->next) {
+        for (Node<T>* i = head; i; i = i->next) {
+            for (Node<T>* j = head; j; j = j->next) {
                 if (i->accessCount > j->accessCount) {
                     temp->id = i->id;
                     temp->accessCount = i->accessCount;
