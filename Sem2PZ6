@@ -2,11 +2,11 @@
 
 using namespace std;
 
-template<class M>
+template<class T>
 struct Node {
-    int id;
-    int accessCount;
-    M data;
+    int id = 0;
+    int accessCount = 0;
+    T data;
     Node* next, * prev;
 };
 
@@ -20,13 +20,13 @@ private:
     int id_counter;
 public:
     List() {
-        head = tail = NULL;
+        head = tail = nullptr;
         count = 0;
         id_counter = 0;
     }
 //===============================================================================================
     List(List& L) {
-        head = tail = NULL;
+        head = tail = nullptr;
         count = 0;
         id_counter = 0;
 
@@ -62,8 +62,7 @@ public:
         }
 
         if (count == 0) {
-            head = temp;
-            tail = temp;
+            head = tail = temp;
         }
         else {
             temp->prev = tail;
@@ -81,7 +80,7 @@ public:
         }
 
         temp->accessCount++;
-        cout << temp->id << ' ' << temp->accessCount << ' ' << temp->data;
+        cout << temp->id << ' ' << temp->accessCount << ' ' << temp->data << endl;
         Sort();
     }
 //===============================================================================================
@@ -91,15 +90,19 @@ public:
         while (temp->next != nullptr) {
             temp = temp->next;
             cout << temp->id << ' ' << temp->accessCount << ' ' << temp->data << endl;
-        }
+        };
     }
 //===============================================================================================
     void Sort() {
-        Node<T>* temp;
+
         for (Node<T>* i = head; i; i = i->next) {
             for (Node<T>* j = head; j; j = j->next) {
                 if (i->accessCount > j->accessCount) {
+
+                    Node<T> *temp = nullptr;
+                    cout << i->id << ' ' << temp->id << endl;
                     temp->id = i->id;
+                    cout << i->id << ' ' << temp->id;
                     temp->accessCount = i->accessCount;
                     temp->data = i->data;
 
@@ -125,6 +128,12 @@ int main()
     a.push_back(2);
     a.push_back(1);
     a.push_back(3);
+    a.push_back(4);
+    a.Print();
+    a.Print();
+    cout << endl;
+    a.PrintByID(3);
+    a.Print();
     a.Print();
     return 0;
 }
