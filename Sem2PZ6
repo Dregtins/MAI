@@ -100,19 +100,19 @@ public:
                 if (i->accessCount > j->accessCount) {
 
                     Node<T> *temp = nullptr;
-                    cout << i->id << ' ' << temp->id << endl;
-                    temp->id = i->id;
-                    cout << i->id << ' ' << temp->id;
-                    temp->accessCount = i->accessCount;
-                    temp->data = i->data;
+//                    cout << i->id << ' ' << temp->id << endl;
+                    int tempId = i->id;
+//                    cout << i->id << ' ' << temp->id << endl;
+                    int tempAccessCount = i->accessCount;
+                    T tempData = i->data;
 
                     i->id = j->id;
                     i->accessCount = j->accessCount;
                     i->data = j->data;
 
-                    j->id = temp->id;
-                    j->accessCount = temp->accessCount;
-                    j->data = temp->data;
+                    j->id = tempId;
+                    j->accessCount = tempAccessCount;
+                    j->data = tempData;
                 }
             }
         }
@@ -133,7 +133,13 @@ int main()
     a.Print();
     cout << endl;
     a.PrintByID(3);
-    a.Print();
+    cout << endl;
+    a.PrintByID(3);
+    cout << endl;
+    a.PrintByID(1);
+    cout << endl;
+
+//    a.Print();
     a.Print();
     return 0;
 }
