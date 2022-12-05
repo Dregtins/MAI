@@ -1,0 +1,67 @@
+#include <iostream>
+#include <string>
+#include <cstdlib>
+
+using namespace std;
+
+int string_size = 3; //Задание размера строки
+
+//===================================================================
+//Функция генерированния строк
+char symbols[37]  = "abcdefghijklmnopqrstuvwxyz0123456789";
+string string_generator(){
+    string a;
+    int random;
+    for (int i = 0; i < string_size; i++) {
+        random = rand()%(36);
+        a.push_back(symbols[random]);
+    }
+    return a;
+};
+//===================================================================
+//Фукнция хэширования
+string hasher(string a){
+    string hashed_string;
+    int asci;
+    char symb[3];
+    for (int i = 0; i < string_size; i++){
+        asci = (a[i] + 15324)/100;
+        hashed_string += to_string(asci);
+    };
+    cout << hashed_string <<endl;
+    while(hashed_string.size() != 32){
+        hashed_string += '3';
+    }
+    return hashed_string;
+};
+
+int main()
+{
+    int size = 10;
+    srand(time(NULL));
+    string massiv_string[size];
+    string massiv_hash[size];
+//===================================================================
+//Генерирование строк
+    for(int i = 0; i < size; i++){
+       massiv_string[i] = string_generator();
+    }
+//===================================================================
+//Вывод сгенерированных строк
+    for(int i = 0; i < size; i++){
+       cout << massiv_string[i] << endl;
+    }
+//===================================================================
+//Хэширование строк 
+    for(int i = 0; i < size; i++){
+       massiv_hash[i] = hasher(massiv_string[i]);
+    }
+//===================================================================
+//Вывод хэшей
+    cout << "Хэшированные строки" << endl;
+
+    for(int i = 0; i < size; i++){
+       cout << massiv_hash[i] << endl;
+    }
+    return 0;
+}
