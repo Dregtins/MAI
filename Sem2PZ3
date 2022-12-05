@@ -2,6 +2,7 @@
 #include <string>
 #include <cstdlib>
 #include <ctime>
+#include <sstream>
 
 using namespace std;
 
@@ -30,15 +31,18 @@ int hasher(string a){
         asci = ((a[i] * 13) + 7)/10;
         hashed_string += to_string(asci);
     };
-    if(hashed_string.size() < 9){
-        while(hashed_string.size() != 9){
+    if(hashed_string.size() < 16){
+        while(hashed_string.size() != 16){
             hashed_string += '3';
         }
     }
     else{
-        hashed_string.resize(9);
+        hashed_string.resize(16);
     }
-    uint64_t b = atoi(hashed_string.c_str());
+    uint64_t b;
+    // = atoi(hashed_string.c_str());
+    istringstream iss(hashed_string.c_str()); //вывод данных в поток iss
+    iss >> b;//запись данных из потока в b
     return b;
 };
 //===================================================================
@@ -90,15 +94,15 @@ int main()
         }*/
     //===================================================================
     //Подсчёт времени сравнения строк
-        unsigned int start_time = clock();
+        clock_t start_time = clock();
         for(int i = 0; i < (size - 1); i++){
             for (int j = (i + 1); j < size; j++){
                 if (massiv_string[i] == massiv_string[j]){
                 }
             }
         }
-        unsigned int end_time = clock();
-        double timing = (double)(end_time - start_time)/ 1000;
+        clock_t end_time = clock();
+        double timing = (double)(end_time - start_time)/ CLOCKS_PER_SEC;
         cout << "Время сравнения строк: "<< timing << endl;
     //===================================================================
     //Подсчёт времени сравнения хэшей
@@ -110,11 +114,11 @@ int main()
             }
         }
         end_time = clock();
-        timing = (double)(end_time - start_time)/ 1000;
+        timing = (double)(end_time - start_time)/ CLOCKS_PER_SEC;
         cout << "Время сравнения хэшей: " << timing << endl;
     //===================================================================
     //Счёт коллизий
-        cout << "Количество коллизий: "<< collision_count(massiv_hash) << endl;
+        cout << "Количество коллизий: "<< collision_count(massiv_hash) << endl << endl;
     //===================================================================
     string_size++;
     }
