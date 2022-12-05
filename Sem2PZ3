@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int size = 10; //Задание размера массива строк
+int size = 2000; //Задание размера массива строк
 int string_size = 3; //Задание размера строки
 
 //===================================================================
@@ -27,10 +27,9 @@ string hasher(string a){
     int asci;
     char symb[3];
     for (int i = 0; i < string_size; i++){
-        asci = ((a[i] * 3) + 2)/10;
+        asci = ((a[i] * 13) + 7)/10;
         hashed_string += to_string(asci);
     };
-    cout << hashed_string <<endl;
     while(hashed_string.size() != 32){
         hashed_string += '3';
     }
@@ -56,7 +55,8 @@ int main()
     srand(time(NULL));
     string massiv_string[size];
     string massiv_hash[size];
-    for(int k = 0; k < 3){
+    for(int k = 0; k < 3; k++){
+        cout << "Для размера строки: " << string_size<< endl;
     //===================================================================
     //Генерирование строк
         for(int i = 0; i < size; i++){
