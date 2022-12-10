@@ -45,6 +45,27 @@ int hasher(string a){
     return b;
 };
 //===================================================================
+//===================================================================
+//Фукнция хэширования
+string hasher2(string a){
+    string hashed_string;
+    int asci;
+    char symb[3];
+    for (int i = 0; i < string_size; i++){
+        asci = ((a[i] * 13) + 7)/10;
+        hashed_string += to_string(asci);
+    };
+    if(hashed_string.size() < 16){
+        while(hashed_string.size() != 16){
+            hashed_string += '3';
+        }
+    }
+    else{
+        hashed_string.resize(16);
+    }
+    return hashed_string;
+};
+//===================================================================
 //Фукнция счёта коллизий
 int collision_count(int mas_hash[]){
     int counter = 0;
@@ -58,7 +79,6 @@ int collision_count(int mas_hash[]){
     return counter;
 }
 //===================================================================
-//Фукнция сравнения
 
 
 
@@ -67,6 +87,7 @@ int main()
     srand(time(NULL));
     string massiv_string[size];
     int massiv_hash[size];
+    string massiv_hash2[size];
     for(int k = 0; k < 4; k++){
         cout << "Для размера строки: " << string_size<< endl;
     //===================================================================
@@ -75,15 +96,17 @@ int main()
            massiv_string[i] = string_generator();
         }
     //===================================================================
-    //Вывод сгенерированных строк
-    /*    for(int i = 0; i < size; i++){
-           cout << massiv_string[i] << endl;
-        }*/
-    //===================================================================
     //Хэширование строк 
         for(int i = 0; i < size; i++){
            massiv_hash[i] = hasher(massiv_string[i]);
         }
+        
+    //===================================================================
+    //Хэширование строк 2
+        for(int i = 0; i < size; i++){
+           massiv_hash2[i] = hasher2(massiv_string[i]);
+        }
+        
     //===================================================================
     //Подсчёт времени сравнения строк
         clock_t start_time = clock();
@@ -108,6 +131,18 @@ int main()
         end_time = clock();
         timing = (double)(end_time - start_time)/ CLOCKS_PER_SEC;
         cout << "Время сравнения хэшей: " << timing << endl;
+    //===================================================================
+    //Подсчёт времени сравнения строковых хэшей
+        start_time = clock();
+        for(int i = 0; i < (size - 1); i++){
+            for (int j = (i + 1); j < size; j++){
+                if (massiv_hash2[i] == massiv_hash2[j]){
+                }
+            }
+        }
+        end_time = clock();
+        timing = (double)(end_time - start_time)/ CLOCKS_PER_SEC;
+        cout << "Время сравнения строковых хэшей: " << timing << endl;
     //===================================================================
     //Счёт коллизий
         cout << "Количество коллизий: "<< collision_count(massiv_hash) << endl << endl;
