@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <vector>
+#include <map>
 
 using namespace std;
 
@@ -146,21 +146,27 @@ int main()
     }
     */
     //=========================================================================================================
-    vector <string> hex_color_vector;
-    
+    map <string, int> hex_color_map;
     for (int i = 0; i < bmiHeader.biWidth; i++) {
         for (int j = 0; j < bmiHeader.biHeight; j++) {
             string hex_color;
-            if ((rgb[i][j].rgbRed != 102) && (rgb[i][j].rgbGreen != 102) && (rgb[i][j].rgbBlue != 102))
-                hex_color += to_hex(rgb[i][j].rgbRed);
-                hex_color += to_hex(rgb[i][j].rgbGreen);
-                hex_color += to_hex(rgb([i][j].rgbBlue);
-                vector.push_back(hex_color);
-                hex_color = "";
-                
+            int flag;
+            if ((rgb[i][j].rgbRed != 102) && (rgb[i][j].rgbGreen != 102) && (rgb[i][j].rgbBlue != 102)){
+                int a = rgb[i][j].rgbRed;
+                hex_color += to_hex(a);
+                a = rgb[i][j].rgbGreen;
+                hex_color += to_hex(a);
+                a = rgb[i][j].rgbBlue;
+                hex_color += to_hex(a);
+                hex_color_map[hex_color]++;
+            }
         }
-        cout << ("vector size = ") << hex_color_vector.size();
     }
+    int i;
+    for(auto it = hex_color_map.begin(); it != hex_color_map.end(); ++it){
+        i++;
+    }
+    cout << ("map size = ") << i;
     
     //==========================================================================================================
     int parts = 30;
