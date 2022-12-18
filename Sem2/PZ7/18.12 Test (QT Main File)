@@ -1,0 +1,206 @@
+// bmp_analys.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
+//
+#define _CRT_SECURE_NO_WARNINGS
+
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <map>
+#include <QtWidgets/QApplication>
+#include <QtQuick/QQuickView>
+#include <QtCore/QDir>
+#include <QtQml/QQmlEngine>
+
+
+using namespace std;
+
+//===================================================================================
+string to_hex(int numb){
+    int a[] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+    string b[] = {"0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"};
+    string str = "";
+    int x1,x2;
+    x1 = numb;
+    int z[8];
+    for (int i = 0; i < 8;i++)
+    {
+        x2 = x1/16;
+        z[i] = x1 - (x2*16);
+        x1 = x2;
+    }
+    for (int j = 8, j2 = 0; j > 0; j--,j2++)
+    {
+        for(int n = 0; n < 16; n++)
+            if (z[j] == a[n])
+            {
+                str = str + b[n];
+            }
+    }
+    return str;
+}
+//===================================================================================
+
+
+static unsigned short read_u16(FILE* fp);
+static unsigned int   read_u32(FILE* fp);
+static int            read_s32(FILE* fp);
+
+int main(int argc, char *argv[])
+{
+    FILE* pFile = fopen("C:/Users/home/Desktop/apple_1.bmp", "rb"); //cat_grey mouse
+
+    BITMAPFILEHEADER header;
+
+    header.bfType = read_u16(pFile);
+    header.bfSize = read_u32(pFile);
+    header.bfReserved1 = read_u16(pFile);
+    header.bfReserved2 = read_u16(pFile);
+    header.bfOffBits = read_u32(pFile);
+
+    BITMAPINFOHEADER bmiHeader;
+
+    bmiHeader.biSize = read_u32(pFile);
+    bmiHeader.biWidth = read_s32(pFile);
+    bmiHeader.biHeight = read_s32(pFile);
+    bmiHeader.biPlanes = read_u16(pFile);
+    bmiHeader.biBitCount = read_u16(pFile);
+    bmiHeader.biCompression = read_u32(pFile);
+    bmiHeader.biSizeImage = read_u32(pFile);
+    bmiHeader.biXPelsPerMeter = read_s32(pFile);
+    bmiHeader.biYPelsPerMeter = read_s32(pFile);
+    bmiHeader.biClrUsed = read_u32(pFile);
+    bmiHeader.biClrImportant = read_u32(pFile);
+
+    RGBQUAD** rgb = new RGBQUAD * [bmiHeader.biWidth];
+    for (int i = 0; i < bmiHeader.biWidth; i++) {
+        rgb[i] = new RGBQUAD[bmiHeader.biHeight];
+    }
+
+    uint32_t** colors = new uint32_t * [bmiHeader.biWidth];
+    for (int i = 0; i < bmiHeader.biWidth; i++) {
+        colors[i] = new uint32_t[bmiHeader.biHeight];
+    }
+
+    for (int i = 0; i < bmiHeader.biWidth; i++) {
+        for (int j = 0; j < bmiHeader.biHeight; j++) {
+            rgb[i][j].rgbBlue = getc(pFile);
+            rgb[i][j].rgbGreen = getc(pFile);
+            rgb[i][j].rgbRed = getc(pFile);
+            colors[i][j] = rgb[i][j].rgbBlue + (rgb[i][j].rgbGreen << 8) + (rgb[i][j].rgbRed << 16);
+        }
+
+        // пропускаем последний байт в строке
+        getc(pFile);
+    }
+    fclose(pFile);
+    //=========================================================================================================
+    map <string, int> hex_color_map;
+    for (int i = 0; i < bmiHeader.biWidth; i++) {
+        for (int j = 0; j < bmiHeader.biHeight; j++) {
+            string hex_color;
+            if ((rgb[i][j].rgbRed != 102) && (rgb[i][j].rgbGreen != 102) && (rgb[i][j].rgbBlue != 102)){
+                int a = rgb[i][j].rgbRed;
+                hex_color += to_hex(a);
+                a = rgb[i][j].rgbGreen;
+                hex_color += to_hex(a);
+                a = rgb[i][j].rgbBlue;
+                hex_color += to_hex(a);
+                hex_color_map[hex_color]++;
+            }
+        }
+    }
+    int i = 0;
+    for(auto it = hex_color_map.begin(); it != hex_color_map.end(); ++it){
+        i++;
+    }
+    cout << ("map size = ") << i;
+
+    //==========================================================================================================
+    int parts = 30;
+    int* vect = (int*)calloc(sizeof(int), parts);
+    uint32_t max = UINT32_MAX & 0x00FFFFFF;
+    uint32_t step = (max / parts)+1;
+    uint32_t border;
+
+    for (int i = 0; i < bmiHeader.biWidth; i++) {
+        for (int j = 0; j < bmiHeader.biHeight; j++) {
+            border = step;
+            for (int k = 0; k < parts; k++)
+            {
+                if (colors[i][j] < border)
+                {
+                    vect[k]++;
+                    break;
+                }
+                border += step;
+            }
+        }
+    }
+
+    for (int i = 0; i < bmiHeader.biWidth; i++) {
+        delete rgb[i];
+        delete colors[i];
+    }
+    delete rgb;
+    delete colors;
+//==========================================================================================================================
+     // Qt Charts uses Qt Graphics View Framework for drawing, therefore QApplication must be used.
+    QApplication app(argc, argv);
+
+    QQuickView viewer;
+    // The following are needed to make examples run without having to install the module
+    // in desktop environments.
+#ifdef Q_OS_WIN
+    QString extraImportPath(QStringLiteral("%1/../../../../%2"));
+#else
+    QString extraImportPath(QStringLiteral("%1/../../../%2"));
+#endif
+    viewer.engine()->addImportPath(extraImportPath.arg(QGuiApplication::applicationDirPath(),
+                                      QString::fromLatin1("qml")));
+    QObject::connect(viewer.engine(), &QQmlEngine::quit, &viewer, &QWindow::close);
+
+    viewer.setTitle(QStringLiteral("QML Custom Legend"));
+    viewer.setSource(QUrl("qrc:/qml/qmlcustomlegend/main.qml"));
+    viewer.setResizeMode(QQuickView::SizeRootObjectToView);
+    viewer.show();
+//=============================================================================================================================
+    return app.exec();
+}
+
+
+static unsigned short read_u16(FILE* fp)
+{
+    unsigned char b0, b1;
+
+    b0 = getc(fp);
+    b1 = getc(fp);
+
+    return ((b1 << 8) | b0);
+}
+
+
+static unsigned int read_u32(FILE* fp)
+{
+    unsigned char b0, b1, b2, b3;
+
+    b0 = getc(fp);
+    b1 = getc(fp);
+    b2 = getc(fp);
+    b3 = getc(fp);
+
+    return ((((((b3 << 8) | b2) << 8) | b1) << 8) | b0);
+}
+
+
+static int read_s32(FILE* fp)
+{
+    unsigned char b0, b1, b2, b3;
+
+    b0 = getc(fp);
+    b1 = getc(fp);
+    b2 = getc(fp);
+    b3 = getc(fp);
+
+    return ((int)(((((b3 << 8) | b2) << 8) | b1) << 8) | b0);
+}
