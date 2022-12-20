@@ -47,7 +47,7 @@ static unsigned short read_u16(FILE* fp);
 static unsigned int   read_u32(FILE* fp);
 static int            read_s32(FILE* fp);
 
-void map_filler(const string file_name){
+map<int,int> map_filler(char* file_name){
     FILE* pFile = fopen(file_name, "rb"); //cat_grey mouse
 
     // считываем заголовок файла
@@ -120,8 +120,8 @@ int main()
 {   
     map <int, int> mp1;
     map <int, int> mp2;
-    for (i = 1; i < 3; i++){
-        string file_name = "/uploads/apple_";
+    for (int i = 1; i < 3; i++){
+        char* file_name = "/uploads/apple_";
         file_name += i;
         file_name += ".bmp";
         if (i == 1){
@@ -131,8 +131,8 @@ int main()
             mp2 = map_filler(file_name);    
         }
     }
-    
-    for (auto it1 = mp1.cbegin(), it2 = mp2.cbegin(); it1 != .cend(); ++it1, ++it2){
+    int dist;
+    for (auto it1 = mp1.cbegin(), it2 = mp2.cbegin(); it1 != mp1.cend(); ++it1, ++it2){
         dist = dist + (((it1->second) - (it2->second))*((it1->second) - (it2->second)));
     }
     
