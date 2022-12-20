@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <map>
+#include <vector>
 #include <string>
 
 using namespace std;
@@ -47,7 +47,7 @@ static unsigned short read_u16(FILE* fp);
 static unsigned int   read_u32(FILE* fp);
 static int            read_s32(FILE* fp);
 
-map<int,int> map_filler(string file_name){
+vector<int> map_filler(string file_name){
     
     FILE* pFile = fopen(file_name.c_str(), "rb"); //cat_grey mouse
 
@@ -97,11 +97,12 @@ map<int,int> map_filler(string file_name){
     }
     fclose(pFile);
 //====================================================================================
-    map<int, int> mp;
+    vector<int> vec;
+    vec.reserve(256);
     for (int i = 0; i < bmiHeader.biWidth; i++) {
         for (int j = 0; j < bmiHeader.biHeight; j++) {
             if ((rgb[i][j].rgbRed != 102) && (rgb[i][j].rgbGreen != 102) && (rgb[i][j].rgbBlue != 102))
-                mp[0.3*rgb[i][j].rgbRed + 0.59*rgb[i][j].rgbGreen + 0.11*rgb[i][j].rgbBlue]++;
+                vec[0.3*rgb[i][j].rgbRed + 0.59*rgb[i][j].rgbGreen + 0.11*rgb[i][j].rgbBlue]++;
         }
     }
 
@@ -112,23 +113,41 @@ map<int,int> map_filler(string file_name){
     }
     delete rgb;
     delete colors;
-    return mp;
+    return vec;
+}
+
+long dist(vector<int> vec1, vector<int> vec2){
+    long dist;
+    for (int i = 0; i < vec1.size(); i++){
+        dist = dist + (((vec1[i]) - (vec2[i]))*((vec1[i]) - (vec2[i])));
+    }
+    return dist;
 }
 
 int main()
 {   
-    map <int, int> mp1;
-    map <int, int> mp2;
+    vector<int> vec1, vec2, vec3, vec4;
     string file_name = "/uploads/apple_1.bmp";
-    mp1 = map_filler(file_name);
+    vec1 = map_filler(file_name);
     file_name = "/uploads/apple_2.bmp";
-    mp2 = map_filler(file_name);
-    int dist;
-    for (auto it1 = mp1.cbegin(), it2 = mp2.cbegin(); it1 != mp1.cend(); ++it1, ++it2){
-        dist = dist + (((it1->second) - (it2->second))*((it1->second) - (it2->second)));
-    }
+    vec2 = map_filler(file_name);
+    file_name = "/uploads/apple_3.bmp";
+    vec3 = map_filler(file_name);
+    file_name = "/uploads/apple_4.bmp";
+    vec4 = map_filler(file_name);
     
-    cout << dist;
+    long distant12 = dist(vec1, vec2);
+    cout << "mp1 mp2" << distant12;
+    long distant13 = dist(vec1, vec3);
+    cout << "mp1 mp3" << distant13;
+    long distant14 = dist(vec1, vec4);
+    cout << "mp1 mp4" << distant14;
+    long distant23 = dist(vec2, vec3);
+    cout << "mp2 mp3" << distant23;
+    long distant24 = dist(vec2, vec4);
+    cout << "mp2 mp4" << distant24;
+    long distant34 = dist(vec3, vec4);
+    cout << "mp3 mp4" << distant34;
     
     return 0;
 }
