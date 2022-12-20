@@ -47,8 +47,9 @@ static unsigned short read_u16(FILE* fp);
 static unsigned int   read_u32(FILE* fp);
 static int            read_s32(FILE* fp);
 
-map<int,int> map_filler(char* file_name){
-    FILE* pFile = fopen(file_name, "rb"); //cat_grey mouse
+map<int,int> map_filler(string file_name){
+    
+    FILE* pFile = fopen(file_name.c_str(), "rb"); //cat_grey mouse
 
     // считываем заголовок файла
     BITMAPFILEHEADER header;
@@ -72,9 +73,7 @@ map<int,int> map_filler(char* file_name){
     bmiHeader.biYPelsPerMeter = read_s32(pFile);
     bmiHeader.biClrUsed = read_u32(pFile);
     bmiHeader.biClrImportant = read_u32(pFile);
-
-    system("pause");
-
+    
     RGBQUAD** rgb = new RGBQUAD * [bmiHeader.biWidth];
     for (int i = 0; i < bmiHeader.biWidth; i++) {
         rgb[i] = new RGBQUAD[bmiHeader.biHeight];
@@ -120,17 +119,10 @@ int main()
 {   
     map <int, int> mp1;
     map <int, int> mp2;
-    for (int i = 1; i < 3; i++){
-        char* file_name = "/uploads/apple_";
-        file_name += i;
-        file_name += ".bmp";
-        if (i == 1){
-            mp1 = map_filler(file_name);    
-        }
-        if (i == 2){
-            mp2 = map_filler(file_name);    
-        }
-    }
+    string file_name = "/uploads/apple_1.bmp";
+    mp1 = map_filler(file_name);
+    file_name = "/uploads/apple_2.bmp";
+    mp2 = map_filler(file_name);
     int dist;
     for (auto it1 = mp1.cbegin(), it2 = mp2.cbegin(); it1 != mp1.cend(); ++it1, ++it2){
         dist = dist + (((it1->second) - (it2->second))*((it1->second) - (it2->second)));
