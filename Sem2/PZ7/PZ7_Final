@@ -1,0 +1,273 @@
+// bmp_analys.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
+//
+#define _CRT_SECURE_NO_WARNINGS
+
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <vector>
+#include <string>
+#include <cmath>
+
+using namespace std;
+
+typedef struct
+{
+    unsigned int    bfType;
+    unsigned long   bfSize;
+    unsigned int    bfReserved1;
+    unsigned int    bfReserved2;
+    unsigned long   bfOffBits;
+} BITMAPFILEHEADER;
+
+typedef struct
+{
+    unsigned int    biSize;
+    int             biWidth;
+    int             biHeight;
+    unsigned short  biPlanes;
+    unsigned short  biBitCount;
+    unsigned int    biCompression;
+    unsigned int    biSizeImage;
+    int             biXPelsPerMeter;
+    int             biYPelsPerMeter;
+    unsigned int    biClrUsed;
+    unsigned int    biClrImportant;
+} BITMAPINFOHEADER;
+
+typedef struct
+{
+    int   rgbBlue;
+    int   rgbGreen;
+    int   rgbRed;
+    int   rgbReserved;
+} RGBQUAD;
+
+static unsigned short read_u16(FILE* fp);
+static unsigned int   read_u32(FILE* fp);
+static int            read_s32(FILE* fp);
+
+vector<int> map_filler(string file_name) {
+
+    FILE* pFile = fopen(file_name.c_str(), "rb"); //cat_grey mouse
+
+    // считываем заголовок файла
+    BITMAPFILEHEADER header;
+
+    header.bfType = read_u16(pFile);
+    header.bfSize = read_u32(pFile);
+    header.bfReserved1 = read_u16(pFile);
+    header.bfReserved2 = read_u16(pFile);
+    header.bfOffBits = read_u32(pFile);
+
+    BITMAPINFOHEADER bmiHeader;
+
+    bmiHeader.biSize = read_u32(pFile);
+    bmiHeader.biWidth = read_s32(pFile);
+    bmiHeader.biHeight = read_s32(pFile);
+    bmiHeader.biPlanes = read_u16(pFile);
+    bmiHeader.biBitCount = read_u16(pFile);
+    bmiHeader.biCompression = read_u32(pFile);
+    bmiHeader.biSizeImage = read_u32(pFile);
+    bmiHeader.biXPelsPerMeter = read_s32(pFile);
+    bmiHeader.biYPelsPerMeter = read_s32(pFile);
+    bmiHeader.biClrUsed = read_u32(pFile);
+    bmiHeader.biClrImportant = read_u32(pFile);
+
+    RGBQUAD** rgb = new RGBQUAD * [bmiHeader.biWidth];
+    for (int i = 0; i < bmiHeader.biWidth; i++) {
+        rgb[i] = new RGBQUAD[bmiHeader.biHeight];
+    }
+
+    uint32_t** colors = new uint32_t * [bmiHeader.biWidth];
+    for (int i = 0; i < bmiHeader.biWidth; i++) {
+        colors[i] = new uint32_t[bmiHeader.biHeight];
+    }
+
+    for (int i = 0; i < bmiHeader.biWidth; i++) {
+        for (int j = 0; j < bmiHeader.biHeight; j++) {
+            rgb[i][j].rgbBlue = getc(pFile);
+            rgb[i][j].rgbGreen = getc(pFile);
+            rgb[i][j].rgbRed = getc(pFile);
+            colors[i][j] = rgb[i][j].rgbBlue + (rgb[i][j].rgbGreen << 8) + (rgb[i][j].rgbRed << 16);
+        }
+
+        // пропускаем последний байт в строке
+        getc(pFile);
+    }
+    fclose(pFile);
+    //====================================================================================
+    vector<int> vec(256);
+    for (int i = 0; i < bmiHeader.biWidth; i++) {
+        for (int j = 0; j < bmiHeader.biHeight; j++) {
+            if ((rgb[i][j].rgbRed != 102) && (rgb[i][j].rgbGreen != 102) && (rgb[i][j].rgbBlue != 102))
+                vec[0.3 * rgb[i][j].rgbRed + 0.59 * rgb[i][j].rgbGreen + 0.11 * rgb[i][j].rgbBlue]++;
+        }
+    }
+    //=====================================================================================
+    for (int i = 0; i < bmiHeader.biWidth; i++) {
+        delete rgb[i];
+        delete colors[i];
+    }
+    delete[] rgb;
+    delete[] colors;
+    return vec;
+}
+
+long dist(vector<int> vec1, vector<int> vec2) {
+    long long dist = 0;
+    for (int i = 0; i < vec1.size(); i++) {
+        dist = dist + (((vec1[i]) - (vec2[i])) * ((vec1[i]) - (vec2[i])));
+    }
+    return sqrt(dist);
+}
+
+int main()
+{
+    setlocale(LC_ALL, "RUSSIAN");
+    vector<int> vec1, vec2, vec3, vec4;
+    string file_name = "D:/Серый(комп)/МАИ/2 курс/прога/пз7/apple_1.bmp";
+    vec1 = map_filler(file_name);
+    file_name = "D:/Серый(комп)/МАИ/2 курс/прога/пз7/apple_2.bmp";
+    vec2 = map_filler(file_name);
+    file_name = "D:/Серый(комп)/МАИ/2 курс/прога/пз7/apple_3.bmp";
+    vec3 = map_filler(file_name);
+    file_name = "D:/Серый(комп)/МАИ/2 курс/прога/пз7/apple_4.bmp";
+    vec4 = map_filler(file_name);
+
+    long min = 9999999;
+    string same;
+    long long distant11 = dist(vec1, vec1);
+    cout << "apple_1.bmp apple_1.bmp " << distant11 << endl;
+
+    long long distant12 = dist(vec1, vec2);
+    cout << "apple_1.bmp apple_2.bmp " << distant12 << endl;
+    if (distant12 < min) {
+        min = distant12;
+        same = "apple_1.bmp apple_2.bmp ";
+    }
+    long long distant13 = dist(vec1, vec3);
+    cout << "apple_1.bmp apple_3.bmp " << distant13 << endl;
+    if (distant13 < min) {
+        min = distant13;
+        same = "apple_1.bmp apple_3.bmp ";
+    }
+    long long distant14 = dist(vec1, vec4);
+    cout << "apple_1.bmp apple_4.bmp " << distant14 << endl;
+    if (distant14 < min) {
+        min = distant14;
+        same = "apple_1.bmp apple_4.bmp ";
+    }
+    long long distant23 = dist(vec2, vec3);
+    cout << "apple_2.bmp apple_3.bmp " << distant23 << endl;
+    if (distant23 < min) {
+        min = distant23;
+        same = "apple_2.bmp apple_3.bmp ";
+    }
+    long long distant24 = dist(vec2, vec4);
+    cout << "apple_2.bmp apple_4.bmp " << distant24 << endl;
+    if (distant24 < min) {
+        min = distant24;
+        same = "apple_2.bmp apple_4.bmp ";
+    }
+    long long distant34 = dist(vec3, vec4);
+    cout << "apple_3.bmp apple_4.bmp " << distant34 << endl;
+    if (distant34 < min) {
+        min = distant34;
+        same = "apple_3.bmp apple_4.bmp ";
+    }
+
+    cout << "Наиболее похожие картинки: " << same << endl;
+    
+    file_name = "D:/Серый(комп)/МАИ/2 курс/прога/пз7/straw_1.bmp";
+    vec1 = map_filler(file_name);
+    file_name = "D:/Серый(комп)/МАИ/2 курс/прога/пз7/straw_2.bmp";
+    vec2 = map_filler(file_name);
+    file_name = "D:/Серый(комп)/МАИ/2 курс/прога/пз7/straw_3.bmp";
+    vec3 = map_filler(file_name);
+    file_name = "D:/Серый(комп)/МАИ/2 курс/прога/пз7/straw_4.bmp";
+    vec4 = map_filler(file_name);
+
+    min = 9999999;
+    distant11 = dist(vec1, vec1);
+    cout << "straw_1.bmp straw_1.bmp " << distant11 << endl;
+
+    distant12 = dist(vec1, vec2);
+    cout << "straw_1.bmp straw_2.bmp " << distant12 << endl;
+    if (distant12 < min) {
+        min = distant12;
+        same = "straw_1.bmp straw_2.bmp ";
+    }
+    distant13 = dist(vec1, vec3);
+    cout << "straw_1.bmp straw_3.bmp " << distant13 << endl;
+    if (distant13 < min) {
+        min = distant13;
+        same = "straw_1.bmp straw_3.bmp ";
+    }
+    distant14 = dist(vec1, vec4);
+    cout << "straw_1.bmp straw_4.bmp " << distant14 << endl;
+    if (distant14 < min) {
+        min = distant14;
+        same = "straw_1.bmp straw_4.bmp ";
+    }
+    distant23 = dist(vec2, vec3);
+    cout << "straw_2.bmp straw_3.bmp " << distant23 << endl;
+    if (distant23 < min) {
+        min = distant23;
+        same = "straw_2.bmp straw_3.bmp ";
+    }
+    distant24 = dist(vec2, vec4);
+    cout << "straw_2.bmp straw_4.bmp " << distant24 << endl;
+    if (distant24 < min) {
+        min = distant24;
+        same = "straw_2.bmp straw_4.bmp ";
+    }
+    distant34 = dist(vec3, vec4);
+    cout << "straw_3.bmp straw_4.bmp " << distant34 << endl;
+    if (distant34 < min) {
+        min = distant34;
+        same = "straw_3.bmp straw_4.bmp ";
+    }
+
+    cout << "Наиболее похожие картинки: " << same;
+
+    return 0;
+}
+
+
+static unsigned short read_u16(FILE* fp)
+{
+    unsigned char b0, b1;
+
+    b0 = getc(fp);
+    b1 = getc(fp);
+
+    return ((b1 << 8) | b0);
+}
+
+
+static unsigned int read_u32(FILE* fp)
+{
+    unsigned char b0, b1, b2, b3;
+
+    b0 = getc(fp);
+    b1 = getc(fp);
+    b2 = getc(fp);
+    b3 = getc(fp);
+
+    return ((((((b3 << 8) | b2) << 8) | b1) << 8) | b0);
+}
+
+
+static int read_s32(FILE* fp)
+{
+    unsigned char b0, b1, b2, b3;
+
+    b0 = getc(fp);
+    b1 = getc(fp);
+    b2 = getc(fp);
+    b3 = getc(fp);
+
+    return ((int)(((((b3 << 8) | b2) << 8) | b1) << 8) | b0);
+}
